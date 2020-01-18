@@ -86,6 +86,10 @@ public class Camera extends JComponent implements Runnable{
         mh = new MessageHandler();
     }
 
+    public MessageHandler getMh() {
+        return mh;
+    }
+
     // run method
     public void run(){
 
@@ -144,14 +148,14 @@ public class Camera extends JComponent implements Runnable{
     }
 
     private void sendText() {
-        if(System.currentTimeMillis() > curTime + diff) {
+        if(System.currentTimeMillis() > curTime + diff || true) {
             date = new Date();
             if (detected && !sent) {
                 String message = dateFormat.format(date) + "~" + timeFormat.format(date);
                 sent = true;
                 // send notification
-                mh.sendMessage(message.split("~"), screenshot);
-                System.out.println("Message sent");
+                File latestPic = new File(Globals.resources + "\\image.jpg");
+                mh.sendMessage(message.split("~"), latestPic);
             } else if (!detected) {
                 sent = false;
             }
@@ -244,7 +248,6 @@ public class Camera extends JComponent implements Runnable{
     }
 }
 
-// honestly i don't know exactly how this works but it shouldn't be the reason it stops working
 enum Keys
 {
     ESCAPE("Escape", KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)),

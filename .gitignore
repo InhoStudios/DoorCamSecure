@@ -2,3 +2,5 @@
 DoorCamID-38fc85491348.json
 
 src/main/java/net/inhostudios/doorcam/Tokens.java
+
+target/classes/

@@ -1,5 +1,6 @@
 package net.inhostudios.doorcam.image;
 
+import net.inhostudios.doorcam.App;
 import net.inhostudios.doorcam.Globals;
 import net.inhostudios.doorcam.MessageHandler;
 import org.bytedeco.javacpp.opencv_core;
@@ -7,6 +8,7 @@ import org.bytedeco.javacv.*;
 import sun.plugin2.message.Message;
 
 import javax.imageio.ImageIO;
+import javax.security.auth.login.LoginException;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -86,6 +88,7 @@ public class Camera extends JComponent implements Runnable{
 
     // run method
     public void run(){
+
         // starting the thread for the frame grabbing object
         try {
             grabber.start();
@@ -144,10 +147,10 @@ public class Camera extends JComponent implements Runnable{
         if(System.currentTimeMillis() > curTime + diff) {
             date = new Date();
             if (detected && !sent) {
-                String message = "Person detected at door on " + dateFormat.format(date) + " at " + timeFormat.format(date);
+                String message = dateFormat.format(date) + "~" + timeFormat.format(date);
                 sent = true;
                 // send notification
-                mh.sendMessage(message);
+                mh.sendMessage(message.split("~"), screenshot);
                 System.out.println("Message sent");
             } else if (!detected) {
                 sent = false;

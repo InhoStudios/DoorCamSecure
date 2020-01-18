@@ -46,6 +46,20 @@
             <artifactId>twilio</artifactId>
             <version>7.47.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>4.1.0_100</version>
+        </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>jcenter</id>
+            <name>jcenter-bintray</name>
+            <url>https://jcenter.bintray.com</url>
+        </repository>
+    </repositories>
 
 </project>

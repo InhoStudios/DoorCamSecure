@@ -53,21 +53,6 @@ public class Camera extends JComponent implements Runnable{
         // setting camera size
         frame.setSize(frameWidth, frameHeight);
 
-        // map for keyboard inputs
-        ActionMap actionMap = frame.getRootPane().getActionMap();
-        InputMap inputMap = frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-        // adding key inputs to key maps
-        for (Keys direction : Keys.values())
-        {
-            actionMap.put(direction.getText(), new KeyBinding(direction.getText()));
-            inputMap.put(direction.getKeyStroke(), direction.getText());
-        }
-
-        // adding key listeners to the frame
-        frame.getRootPane().setActionMap(actionMap);
-        frame.getRootPane().setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW, inputMap);
-
         // setup window listener for close action
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter()
@@ -92,7 +77,6 @@ public class Camera extends JComponent implements Runnable{
 
     // run method
     public void run(){
-
         // starting the thread for the frame grabbing object
         try {
             grabber.start();
@@ -209,76 +193,5 @@ public class Camera extends JComponent implements Runnable{
             e.printStackTrace();
         }
         return false;
-    }
-
-    // key binding object for key mapping
-    private class KeyBinding extends AbstractAction {
-
-        private static final long serialVersionUID = 1L;
-
-        public KeyBinding(String text)
-        {
-            super(text);
-            putValue(ACTION_COMMAND_KEY, text);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            String action = e.getActionCommand();
-            if (action.equals(Keys.ESCAPE.toString())) stop();
-            else System.out.println("Key Binding: " + action);
-
-            // taking a screenshot
-            if(action.equals(Keys.CTRLC.toString())){
-                //flash
-//                try {
-////                    BufferedImage flash = ImageIO.read(new File(System.getProperty("user.dir") +
-////                            "\\src\\main\\resources\\flash.jpg"));
-////                    frame.showImage(flash);
-//                } catch (FileNotFoundException e1) {
-//                    e1.printStackTrace();
-//                } catch (IOException e1) {
-//                    e1.printStackTrace();
-//                }
-
-                saveImage(screenshot);
-            }
-        }
-    }
-}
-
-enum Keys
-{
-    ESCAPE("Escape", KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)),
-    CTRLC("Control-S", KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK)),
-    UP("Up", KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0)),
-    DOWN("Down", KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0)),
-    LEFT("Left", KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0)),
-    RIGHT("Right", KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0));
-
-    private String text;
-    private KeyStroke keyStroke;
-
-    Keys(String text, KeyStroke keyStroke)
-    {
-        this.text = text;
-        this.keyStroke = keyStroke;
-    }
-
-    public String getText()
-    {
-        return text;
-    }
-
-    public KeyStroke getKeyStroke()
-    {
-        return keyStroke;
-    }
-
-    @Override
-    public String toString()
-    {
-        return text;
     }
 }

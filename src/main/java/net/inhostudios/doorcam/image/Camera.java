@@ -132,7 +132,7 @@ public class Camera extends JComponent implements Runnable{
     }
 
     private void sendText() {
-        if(System.currentTimeMillis() > curTime + diff || true) {
+        if(System.currentTimeMillis() > curTime + diff) {
             date = new Date();
             if (detected && !sent) {
                 String message = dateFormat.format(date) + "~" + timeFormat.format(date);

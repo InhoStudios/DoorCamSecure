@@ -1,8 +1,10 @@
 package net.inhostudios.doorcam.image;
 
 import net.inhostudios.doorcam.Globals;
+import net.inhostudios.doorcam.MessageHandler;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacv.*;
+import sun.plugin2.message.Message;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -13,7 +15,10 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Camera extends JComponent implements Runnable{
 
@@ -25,8 +30,18 @@ public class Camera extends JComponent implements Runnable{
     private static int frameWidth = 1280;
     private static int frameHeight = 720;
     private BufferedImage screenshot;
+    private boolean detected = false, sent = false;
 
     private String path = Globals.resources + "\\image.jpg";
+
+    private MessageHandler mh;
+
+    private Date date;
+    private DateFormat dateFormat = new SimpleDateFormat("E, dd MMM yyyy");
+    private DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss z");
+
+    private long curTime = 0;
+    private int diff = 5 * 60000;
 
     // image grabbing object from open CV api
     private static OpenCVFrameGrabber grabber = new OpenCVFrameGrabber(0);
@@ -65,6 +80,8 @@ public class Camera extends JComponent implements Runnable{
                 stop();
             }
         });
+
+        mh = new MessageHandler();
     }
 
     // run method
@@ -96,6 +113,19 @@ public class Camera extends JComponent implements Runnable{
             } catch(Exception e){
                 e.printStackTrace();
             }
+
+            // save the image and process it (in the save image method)
+            saveImage(screenshot);
+
+            // send notification if detected
+            sendText();
+
+            // handler on a timer
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         System.out.println("Ending camera thread");
         // ending the grabber thread
@@ -108,6 +138,22 @@ public class Camera extends JComponent implements Runnable{
         // ending the frame thread
         frame.dispose();
         System.out.println("Closing camera");
+    }
+
+    private void sendText() {
+        if(System.currentTimeMillis() > curTime + diff) {
+            date = new Date();
+            if (detected && !sent) {
+                String message = "Person detected at door on " + dateFormat.format(date) + " at " + timeFormat.format(date);
+                sent = true;
+                // send notification
+                mh.sendMessage(message);
+                System.out.println("Message sent");
+            } else if (!detected) {
+                sent = false;
+            }
+            curTime = System.currentTimeMillis();
+        }
     }
 
     // starting the thread
@@ -141,14 +187,14 @@ public class Camera extends JComponent implements Runnable{
             e.printStackTrace();
         }
 
-        if(processImage()) System.out.println("Person detected");
+        if(detected = processImage()) System.out.println("Person detected");
+        else System.out.println("no person detected");
     }
 
     private boolean processImage() {
         try {
             for(String str : ImageHandler.detectLabels(path)) {
-                System.out.println(str);
-                if(str.toLowerCase().equals("person") || str.toLowerCase().equals("people") || str.toLowerCase().equals("man")) {
+                if(str.toLowerCase().equals("person") || str.toLowerCase().equals("people") || str.toLowerCase().equals("man") || str.toLowerCase().equals("woman")) {
                     return true;
                 }
             }

@@ -43,13 +43,13 @@ public class ImageHandler {
             for (AnnotateImageResponse res : responses) {
                 for (LocalizedObjectAnnotation entity : res.getLocalizedObjectAnnotationsList()) {
                     results.add(entity.getName());
-                    out.format("Object name: %s\n", entity.getName());
-                    out.format("Confidence: %s\n", entity.getScore());
-                    out.format("Normalized Vertices:\n");
-                    entity
-                            .getBoundingPoly()
-                            .getNormalizedVerticesList()
-                            .forEach(vertex -> out.format("- (%s, %s)\n", vertex.getX(), vertex.getY()));
+//                    out.format("Object name: %s\n", entity.getName());
+//                    out.format("Confidence: %s\n", entity.getScore());
+//                    out.format("Normalized Vertices:\n");
+//                    entity
+//                            .getBoundingPoly()
+//                            .getNormalizedVerticesList()
+//                            .forEach(vertex -> out.format("- (%s, %s)\n", vertex.getX(), vertex.getY()));
                 }
             }
         }
